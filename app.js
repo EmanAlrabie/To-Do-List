@@ -8,23 +8,30 @@ app.set("view engine", "ejs");
 app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"))
+app.use(express.static("public"));
 
-var items = []
-
+var items = [];
+var workItems = [];
 // simple route
 app.get("/", (req, res) => {
-  res.render("list", { day: "Sunday", newItem: items });
-  //   res.json({ message: "Welcome to bezkoder application." });
+  res.render("list", { listTitle: "Sunday", newItem: items }); // render like send file but with parameters
 });
 
 app.post("/", (req, res) => {
-var newItem = req.body.newItem;
-items.push(newItem)
-  res.redirect("/");
+  var newItem = req.body.newItem;
+  if(req.body.button === "Work"){
+    workItems.push(newItem);
+    res.redirect("/work");
+  }else{
+    items.push(newItem);
+    res.redirect("/");
+  }
  
 });
 
+app.get("/work", (req, res) => {
+  res.render("list", { listTitle: "Work", newItem: workItems });
+});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
